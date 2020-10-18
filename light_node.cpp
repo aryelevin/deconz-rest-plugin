@@ -538,6 +538,7 @@ void LightNode::setHaEndpoint(const deCONZ::SimpleDescriptor &endpoint)
                 }
                 else if (i->id() == FAN_CONTROL_CLUSTER_ID) {
                     addItem(DataTypeUInt8, RStateSpeed);
+                    ltype = QLatin1String("Fan control");
                 }
                 else if (i->id() == IAS_WD_CLUSTER_ID)
                 {
@@ -614,6 +615,8 @@ void LightNode::setHaEndpoint(const deCONZ::SimpleDescriptor &endpoint)
             // Danalock support. Add the device id to setHAEndPoint() to set the type to "Door lock".
             case DEV_ID_DOOR_LOCK:                     ltype = QLatin1String("Door Lock"); break;
             case DEV_ID_FAN:                           ltype = QLatin1String("Fan"); break;
+            case DEV_ID_HA_THERMOSTAT:                 removeItem(RStateAlert);
+                                                       ltype = QLatin1String("Fan control"); break;
             case DEV_ID_CONFIGURATION_TOOL:            removeItem(RStateOn);
                                                        removeItem(RStateAlert);
                                                        ltype = QLatin1String("Configuration tool"); break;

@@ -131,6 +131,7 @@
 // Other HA devices
 #define DEV_ID_HA_WINDOW_COVERING_DEVICE    0x0202 // Window Covering Device
 #define DEV_ID_HA_WINDOW_COVERING_CONTROLLER 0x0203 // Window Covering Controller
+#define DEV_ID_HA_THERMOSTAT                0xc202 // Thermostat (with fan control - used by OWON AC201)
 
 // Danalock support
 #define DEV_ID_DOOR_LOCK                    0x000a // Door Lock

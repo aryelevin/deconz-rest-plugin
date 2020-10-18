@@ -1868,6 +1868,7 @@ void DeRestPluginPrivate::addLightNode(const deCONZ::Node *node)
         bool hasServerLevel = false;
         bool hasServerColor = false;
         bool hasIASWDCluster = false;
+        bool hasFanControlCluster = false;
 
         for (int c = 0; c < i->inClusters().size(); c++)
         {
@@ -1876,6 +1877,7 @@ void DeRestPluginPrivate::addLightNode(const deCONZ::Node *node)
             else if (i->inClusters()[c].id() == COLOR_CLUSTER_ID) { hasServerColor = true; }
             else if (i->inClusters()[c].id() == WINDOW_COVERING_CLUSTER_ID) { hasServerOnOff = true; }
             else if (i->inClusters()[c].id() == IAS_WD_CLUSTER_ID) { hasIASWDCluster = true; }
+            else if (i->inClusters()[c].id() == FAN_CONTROL_CLUSTER_ID) { hasFanControlCluster = true; }
             else if ((i->inClusters()[c].id() == TUYA_CLUSTER_ID) && (node->macCapabilities() & deCONZ::MacDeviceIsFFD) ) { hasServerOnOff = true; }
             // Danalock support. The cluster needs to be defined and whitelisted by setting hasServerOnOff
             else if (node->nodeDescriptor().manufacturerCode() == VENDOR_DANALOCK && i->inClusters()[c].id() == DOOR_LOCK_CLUSTER_ID) { hasServerOnOff = true; }
@@ -2159,6 +2161,15 @@ void DeRestPluginPrivate::addLightNode(const deCONZ::Node *node)
                         {
                             // Xiaomi wall switch lumi.ctrl_neutral1, lumi.ctrl_neutral2
                             // TODO exclude endpoint 0x03 for lumi.ctrl_neutral1
+                            lightNode.setHaEndpoint(*i);
+                        }
+                    }
+                    break;
+
+                case DEV_ID_HA_THERMOSTAT:
+                    {
+                        if (hasFanControlCluster)
+                        {
                             lightNode.setHaEndpoint(*i);
                         }
                     }
@@ -2731,6 +2742,7 @@ LightNode *DeRestPluginPrivate::updateLightNode(const deCONZ::NodeEvent &event)
             case DEV_ID_Z30_ONOFF_PLUGIN_UNIT:
             case DEV_ID_HA_WINDOW_COVERING_DEVICE:
             case DEV_ID_HA_WINDOW_COVERING_CONTROLLER:
+            case DEV_ID_HA_THERMOSTAT:
             // Danalock support. The device id (0x000a) needs to be defined and whitelisted
             case DEV_ID_DOOR_LOCK:
             case DEV_ID_ZLL_ONOFF_SENSOR:
