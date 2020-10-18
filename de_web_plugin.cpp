@@ -2742,6 +2742,7 @@ LightNode *DeRestPluginPrivate::updateLightNode(const deCONZ::NodeEvent &event)
             case DEV_ID_Z30_ONOFF_PLUGIN_UNIT:
             case DEV_ID_HA_WINDOW_COVERING_DEVICE:
             case DEV_ID_HA_WINDOW_COVERING_CONTROLLER:
+            case DEV_ID_HA_THERMOSTAT:
             // Danalock support. The device id (0x000a) needs to be defined and whitelisted
             case DEV_ID_DOOR_LOCK:
             case DEV_ID_ZLL_ONOFF_SENSOR:
