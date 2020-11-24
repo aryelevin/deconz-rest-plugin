@@ -299,6 +299,7 @@ static const SupportedDevice supportedDevices[] = {
     { VENDOR_EMBER, "ElkoDimmer", emberMacPrefix }, // Elko dimmer
     { VENDOR_ATMEL, "Thermostat", ecozyMacPrefix }, // eCozy Thermostat
     { VENDOR_OWON, "AC201", davicomMacPrefix }, // OWON AC201 Thermostat
+    { VENDOR_OWON, "SLC603", davicomMacPrefix }, // OWON SLC603 Dimmer Remote
     { VENDOR_STELPRO, "ST218", xalMacPrefix }, // Stelpro Thermostat
     { VENDOR_STELPRO, "STZB402", xalMacPrefix }, // Stelpro baseboard thermostat
     { VENDOR_STELPRO, "SORB", xalMacPrefix }, // Stelpro Orleans Fan
@@ -3685,6 +3686,29 @@ void DeRestPluginPrivate::checkSensorButtonEvent(Sensor *sensor, const deCONZ::A
     {
         // setup during add sensor
     }
+    else if (sensor->modelId() == QLatin1String("SLC603")) // OWON SLC603
+    {
+        checkReporting = true;
+        if (sensor->mode() != Sensor::ModeColorTemperature) // only supported mode yet
+        {
+            sensor->setMode(Sensor::ModeColorTemperature);
+            updateSensorEtag(sensor);
+        }
+
+        if (sensor->fingerPrint().profileId == HA_PROFILE_ID) // new ZB3 firmware
+        {
+            if (ind.dstAddressMode() == deCONZ::ApsGroupAddress && ind.dstAddress().group() == 0)
+            {
+                checkClientCluster = true;
+                ResourceItem *item = sensor->item(RConfigGroup);
+                if (!item || (item && (item->toString() == QLatin1String("0") || item->toString().isEmpty())))
+                {
+                    // still default group, create unique group and binding
+                    checkSensorGroup(sensor);
+                }
+            }
+        }
+    }
     else if (sensor->modelId() == QLatin1String("TRADFRI remote control"))
     {
         checkReporting = true;
@@ -6506,6 +6530,14 @@ void DeRestPluginPrivate::addSensorNode(const deCONZ::Node *node, const SensorFi
             item = sensorNode.addItem(DataTypeString, RConfigAlert);
             item->setValue(R_ALERT_DEFAULT);
         }
+
+        sensorNode.setName(QString("%1 %2").arg(modelId).arg(sensorNode.id()));
+    }
+    else if (node->nodeDescriptor().manufacturerCode() == VENDOR_OWON || modelId.startsWith(QLatin1String("SLC603")))
+    {
+        sensorNode.setManufacturer(QLatin1String("OWON"));
+        
+        sensorNode.setMode(Sensor::ModeDimmer);
 
         sensorNode.setName(QString("%1 %2").arg(modelId).arg(sensorNode.id()));
     }
