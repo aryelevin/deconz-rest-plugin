@@ -3689,25 +3689,25 @@ void DeRestPluginPrivate::checkSensorButtonEvent(Sensor *sensor, const deCONZ::A
     else if (sensor->modelId() == QLatin1String("SLC603")) // OWON SLC603 Zigbee Rotary Switch
     {
         checkReporting = true;
-        if (sensor->mode() != Sensor::ModeColorTemperature) // only supported mode yet
-        {
-            sensor->setMode(Sensor::ModeColorTemperature);
-            updateSensorEtag(sensor);
-        }
-
-        if (sensor->fingerPrint().profileId == HA_PROFILE_ID) // new ZB3 firmware
-        {
-            if (ind.dstAddressMode() == deCONZ::ApsGroupAddress && ind.dstAddress().group() == 0)
-            {
-                checkClientCluster = true;
-                ResourceItem *item = sensor->item(RConfigGroup);
-                if (!item || (item && (item->toString() == QLatin1String("0") || item->toString().isEmpty())))
-                {
-                    // still default group, create unique group and binding
-                    checkSensorGroup(sensor);
-                }
-            }
-        }
+//        if (sensor->mode() != Sensor::ModeColorTemperature) // only supported mode yet
+//        {
+//            sensor->setMode(Sensor::ModeColorTemperature);
+//            updateSensorEtag(sensor);
+//        }
+//
+//        if (sensor->fingerPrint().profileId == HA_PROFILE_ID) // new ZB3 firmware
+//        {
+//            if (ind.dstAddressMode() == deCONZ::ApsGroupAddress && ind.dstAddress().group() == 0)
+//            {
+//                checkClientCluster = true;
+//                ResourceItem *item = sensor->item(RConfigGroup);
+//                if (!item || (item && (item->toString() == QLatin1String("0") || item->toString().isEmpty())))
+//                {
+//                    // still default group, create unique group and binding
+//                    checkSensorGroup(sensor);
+//                }
+//            }
+//        }
     }
     else if (sensor->modelId() == QLatin1String("TRADFRI remote control"))
     {
