@@ -3686,7 +3686,7 @@ void DeRestPluginPrivate::checkSensorButtonEvent(Sensor *sensor, const deCONZ::A
     {
         // setup during add sensor
     }
-    else if (sensor->modelId() == QLatin1String("SLC603")) // OWON SLC603
+    else if (sensor->modelId() == QLatin1String("SLC603")) // OWON SLC603 Zigbee Rotary Switch
     {
         checkReporting = true;
         if (sensor->mode() != Sensor::ModeColorTemperature) // only supported mode yet
@@ -7299,6 +7299,7 @@ void DeRestPluginPrivate::updateSensorNode(const deCONZ::NodeEvent &event)
                                         i->modelId().startsWith(QLatin1String("45127")) || // Namron 1/2/4-ch remote controller
                                         i->modelId().startsWith(QLatin1String("RGBgenie ZB-5")) || // RGBgenie remote control
                                         i->modelId().startsWith(QLatin1String("VOC_Sensor")) || // LifeControl Enviroment sensor
+                                        i->modelId().startsWith(QLatin1String("SLC603")) || // OWON SLC603 Zigbee Rotary Switch
                                         i->modelId().startsWith(QLatin1String("ZG2835"))) // SR-ZG2835 Zigbee Rotary Switch
                                     {
                                         bat = ia->numericValue().u8;
@@ -7340,6 +7341,7 @@ void DeRestPluginPrivate::updateSensorNode(const deCONZ::NodeEvent &event)
                                         i->modelId().startsWith(QLatin1String("45127")) || // Namron 1/2/4-ch remote controller
                                         i->modelId().startsWith(QLatin1String("RGBgenie ZB-5")) || // RGBgenie remote control
                                         i->modelId().startsWith(QLatin1String("VOC_Sensor")) || // LifeControl Enviroment sensor
+                                        i->modelId().startsWith(QLatin1String("SLC603")) || // OWON SLC603 Zigbee Rotary Switch
                                         i->modelId().startsWith(QLatin1String("ZG2835"))) // SR-ZG2835 Zigbee Rotary Switch
                                     {
                                         bat = ia->numericValue().u8;
@@ -16175,6 +16177,7 @@ void DeRestPluginPrivate::delayedFastEnddeviceProbe(const deCONZ::NodeEvent *eve
                  sensor->modelId() == QLatin1String("Remote toggle switch") || // Legrand switch module
                  sensor->modelId() == QLatin1String("Remote motion sensor") || // Legrand motion sensor
                  sensor->modelId() == QLatin1String("ZBT-CCTSwitch-D0001") || // LDS Remote
+                 sensor->modelId().startsWith(QLatin1String("SLC603")) || // OWON SLC603 Zigbee Rotary Switch
                  sensor->modelId() == QLatin1String("Shutters central remote switch")) // Legrand shutter switch
         {
             checkSensorGroup(sensor);

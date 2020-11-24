@@ -2680,6 +2680,7 @@ bool DeRestPluginPrivate::checkSensorBindingsForAttributeReporting(Sensor *senso
         sensor->modelId() == QLatin1String("Bell") ||
         // Owon
         sensor->modelId() == QLatin1String("AC201") ||
+        sensor->modelId() == QLatin1String("SLC603") ||
         // Sonoff
         sensor->modelId() == QLatin1String("WB01") ||
         sensor->modelId() == QLatin1String("MS01") ||
@@ -3264,6 +3265,14 @@ bool DeRestPluginPrivate::checkSensorBindingsForClientClusters(Sensor *sensor)
         srcEndpoints.push_back(0x03);
         srcEndpoints.push_back(0x04);
     }
+    // OWON SLC603
+    else if (sensor->modelId().startsWith(QLatin1String("SLC603")))
+    {
+        clusters.push_back(ONOFF_CLUSTER_ID);
+        clusters.push_back(LEVEL_CLUSTER_ID);
+        clusters.push_back(COLOR_CLUSTER_ID);
+        srcEndpoints.push_back(sensor->fingerPrint().endpoint);
+    }
     // LEGRAND Remote switch, simple and double
     else if (sensor->modelId() == QLatin1String("Remote switch") ||
              sensor->modelId() == QLatin1String("Double gangs remote switch"))
@@ -3551,6 +3560,7 @@ void DeRestPluginPrivate::checkSensorGroup(Sensor *sensor)
         sensor->modelId().startsWith(QLatin1String("WB01")) || // Sonoff SNZB-01
         sensor->modelId().startsWith(QLatin1String("E1E-")) || // Sengled smart light switch
         sensor->modelId().startsWith(QLatin1String("ZG2835")) || // SR-ZG2835 Zigbee Rotary Switch
+        sensor->modelId().startsWith(QLatin1String("SLC603")) || // OWON SLC603 Zigbee Rotary Switch
         sensor->modelId().startsWith(QLatin1String("RGBgenie ZB-5121"))) // RGBgenie ZB-5121 remote
     {
 
