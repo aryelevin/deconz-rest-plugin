@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.13)
 
-project(de_rest_plugin VERSION 2.22.01 LANGUAGES C;CXX)
+project(de_rest_plugin VERSION 2.23.00 LANGUAGES C;CXX)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -53,8 +53,8 @@ set(PLUGIN_INCLUDE_FILES
     bindings.h
     button_maps.h
     colorspace.h
-    connectivity.h
     crypto/mmohash.h
+    crypto/password.h
     crypto/random.h
     crypto/scrypt.h
     database.h
@@ -139,8 +139,8 @@ add_library(${PROJECT_NAME} SHARED
     button_maps.cpp
     change_channel.cpp
     colorspace.cpp
-    connectivity.cpp
     crypto/mmohash.cpp
+    crypto/password.cpp
     crypto/random.cpp
     crypto/scrypt.cpp
     database.cpp
@@ -254,6 +254,7 @@ target_compile_definitions(${PROJECT_NAME}
     PRIVATE
     USE_WEBSOCKETS=1
     USE_DUKTAPE_JS_ENGINE=1
+    USE_ULIB_SHARED=1
 
     GW_SW_VERSION="\"\"${PROJECT_VERSION}\"\""
     GW_SW_DATE=${GIT_DATE}
