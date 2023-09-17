@@ -29,7 +29,7 @@ include(FetchContent)
 
 FetchContent_Declare(
   deconzlib
-  GIT_REPOSITORY https://github.com/aryelevin/deconz-lib.git
+  GIT_REPOSITORY https://github.com/dresden-elektronik/deconz-lib.git
   GIT_TAG        main
 )
 # FetchContent_MakeAvailable(deconzlib)
