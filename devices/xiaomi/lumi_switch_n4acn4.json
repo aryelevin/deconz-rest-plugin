@@ -201,12 +201,12 @@
             "cl": "0xfcc0",
             "ep": 1,
             "eval": "Item.val = Attr.val",
-            "fn": "zcl",
+            "fn": "zcl:attr",
             "mf": "0x115f"
           },
-          "read": {"fn": "zcl", "ep": 1, "cl": "0xfcc0", "at": "0x0227", "mf": "0x115f"},
+          "read": {"fn": "zcl:attr", "ep": 1, "cl": "0xfcc0", "at": "0x0227", "mf": "0x115f"},
           "write": {
-            "fn": "zcl", "ep": 1, "cl": "0xfcc0", "at": "0x0227", "dt": "0x10", "mf": "0x115f",
+            "fn": "zcl:attr", "ep": 1, "cl": "0xfcc0", "at": "0x0227", "dt": "0x10", "mf": "0x115f",
             "eval": "Item.val"
           },
           "refresh.interval": 86400
@@ -219,12 +219,12 @@
             "cl": "0xfcc0",
             "ep": 1,
             "eval": "Item.val = Attr.val",
-            "fn": "zcl",
+            "fn": "zcl:attr",
             "mf": "0x115f"
           },
-          "read": {"fn": "zcl", "ep": 1, "cl": "0xfcc0", "at": "0x0217", "mf": "0x115f"},
+          "read": {"fn": "zcl:attr", "ep": 1, "cl": "0xfcc0", "at": "0x0217", "mf": "0x115f"},
           "write": {
-            "fn": "zcl", "ep": 1, "cl": "0xfcc0", "at": "0x0217", "dt": "0x20", "mf": "0x115f",
+            "fn": "zcl:attr", "ep": 1, "cl": "0xfcc0", "at": "0x0217", "dt": "0x20", "mf": "0x115f",
             "eval": "Item.val"
           },
           "refresh.interval": 86400
@@ -237,12 +237,12 @@
             "cl": "0xfcc0",
             "ep": 1,
             "eval": "Item.val = Attr.val",
-            "fn": "zcl",
+            "fn": "zcl:attr",
             "mf": "0x115f"
           },
-          "read": {"fn": "zcl", "ep": 1, "cl": "0xfcc0", "at": "0x023c", "mf": "0x115f"},
+          "read": {"fn": "zcl:attr", "ep": 1, "cl": "0xfcc0", "at": "0x023c", "mf": "0x115f"},
           "write": {
-            "fn": "zcl", "ep": 1, "cl": "0xfcc0", "at": "0x023c", "dt": "0x20", "mf": "0x115f",
+            "fn": "zcl:attr", "ep": 1, "cl": "0xfcc0", "at": "0x023c", "dt": "0x20", "mf": "0x115f",
             "eval": "Item.val"
           },
           "refresh.interval": 86400
@@ -255,12 +255,12 @@
             "cl": "0xfcc0",
             "ep": 1,
             "eval": "Item.val = Attr.val",
-            "fn": "zcl",
+            "fn": "zcl:attr",
             "mf": "0x115f"
           },
-          "read": {"fn": "zcl", "ep": 1, "cl": "0xfcc0", "at": "0x0219", "mf": "0x115f"},
+          "read": {"fn": "zcl:attr", "ep": 1, "cl": "0xfcc0", "at": "0x0219", "mf": "0x115f"},
           "write": {
-            "fn": "zcl", "ep": 1, "cl": "0xfcc0", "at": "0x0219", "dt": "0x20", "mf": "0x115f",
+            "fn": "zcl:attr", "ep": 1, "cl": "0xfcc0", "at": "0x0219", "dt": "0x20", "mf": "0x115f",
             "eval": "Item.val"
           },
           "refresh.interval": 86400
@@ -273,12 +273,12 @@
             "cl": "0xfcc0",
             "ep": 1,
             "eval": "Item.val = Attr.val",
-            "fn": "zcl",
+            "fn": "zcl:attr",
             "mf": "0x115f"
           },
-          "read": {"fn": "zcl", "ep": 1, "cl": "0xfcc0", "at": "0x0210", "mf": "0x115f"},
+          "read": {"fn": "zcl:attr", "ep": 1, "cl": "0xfcc0", "at": "0x0210", "mf": "0x115f"},
           "write": {
-            "fn": "zcl", "ep": 1, "cl": "0xfcc0", "at": "0x0210", "dt": "0x20", "mf": "0x115f",
+            "fn": "zcl:attr", "ep": 1, "cl": "0xfcc0", "at": "0x0210", "dt": "0x20", "mf": "0x115f",
             "eval": "Item.val"
           },
           "refresh.interval": 86400
@@ -291,12 +291,12 @@
             "cl": "0xfcc0",
             "ep": 1,
             "eval": "Item.val = Attr.val",
-            "fn": "zcl",
+            "fn": "zcl:attr",
             "mf": "0x115f"
           },
-          "read": {"fn": "zcl", "ep": 1, "cl": "0xfcc0", "at": "0x0218", "mf": "0x115f"},
+          "read": {"fn": "zcl:attr", "ep": 1, "cl": "0xfcc0", "at": "0x0218", "mf": "0x115f"},
           "write": {
-            "fn": "zcl", "ep": 1, "cl": "0xfcc0", "at": "0x0218", "dt": "0x10", "mf": "0x115f",
+            "fn": "zcl:attr", "ep": 1, "cl": "0xfcc0", "at": "0x0218", "dt": "0x10", "mf": "0x115f",
             "eval": "Item.val"
           },
           "refresh.interval": 86400
@@ -309,12 +309,12 @@
             "cl": "0xfcc0",
             "ep": 1,
             "eval": "Item.val = Attr.val",
-            "fn": "zcl",
+            "fn": "zcl:attr",
             "mf": "0x115f"
           },
-          "read": {"fn": "zcl", "ep": 1, "cl": "0xfcc0", "at": "0x0211", "mf": "0x115f"},
+          "read": {"fn": "zcl:attr", "ep": 1, "cl": "0xfcc0", "at": "0x0211", "mf": "0x115f"},
           "write": {
-            "fn": "zcl", "ep": 1, "cl": "0xfcc0", "at": "0x0211", "dt": "0x20", "mf": "0x115f",
+            "fn": "zcl:attr", "ep": 1, "cl": "0xfcc0", "at": "0x0211", "dt": "0x20", "mf": "0x115f",
             "eval": "Item.val"
           },
           "refresh.interval": 86400
@@ -327,12 +327,12 @@
             "cl": "0xfcc0",
             "ep": 1,
             "eval": "Item.val = Attr.val",
-            "fn": "zcl",
+            "fn": "zcl:attr",
             "mf": "0x115f"
           },
-          "read": {"fn": "zcl", "ep": 1, "cl": "0xfcc0", "at": "0x0221", "mf": "0x115f"},
+          "read": {"fn": "zcl:attr", "ep": 1, "cl": "0xfcc0", "at": "0x0221", "mf": "0x115f"},
           "write": {
-            "fn": "zcl", "ep": 1, "cl": "0xfcc0", "at": "0x0221", "dt": "0x10", "mf": "0x115f",
+            "fn": "zcl:attr", "ep": 1, "cl": "0xfcc0", "at": "0x0221", "dt": "0x10", "mf": "0x115f",
             "eval": "Item.val"
           },
           "refresh.interval": 86400
@@ -345,12 +345,12 @@
             "cl": "0xfcc0",
             "ep": 1,
             "eval": "Item.val = Attr.val",
-            "fn": "zcl",
+            "fn": "zcl:attr",
             "mf": "0x115f"
           },
-          "read": {"fn": "zcl", "ep": 1, "cl": "0xfcc0", "at": "0x0214", "mf": "0x115f"},
+          "read": {"fn": "zcl:attr", "ep": 1, "cl": "0xfcc0", "at": "0x0214", "mf": "0x115f"},
           "write": {
-            "fn": "zcl", "ep": 1, "cl": "0xfcc0", "at": "0x0214", "dt": "0x20", "mf": "0x115f",
+            "fn": "zcl:attr", "ep": 1, "cl": "0xfcc0", "at": "0x0214", "dt": "0x20", "mf": "0x115f",
             "eval": "Item.val"
           },
           "refresh.interval": 86400
@@ -363,12 +363,12 @@
             "cl": "0xfcc0",
             "ep": 1,
             "eval": "Item.val = Attr.val",
-            "fn": "zcl",
+            "fn": "zcl:attr",
             "mf": "0x115f"
           },
-          "read": {"fn": "zcl", "ep": 1, "cl": "0xfcc0", "at": "0x0212", "mf": "0x115f"},
+          "read": {"fn": "zcl:attr", "ep": 1, "cl": "0xfcc0", "at": "0x0212", "mf": "0x115f"},
           "write": {
-            "fn": "zcl", "ep": 1, "cl": "0xfcc0", "at": "0x0212", "dt": "0x20", "mf": "0x115f",
+            "fn": "zcl:attr", "ep": 1, "cl": "0xfcc0", "at": "0x0212", "dt": "0x20", "mf": "0x115f",
             "eval": "Item.val"
           },
           "refresh.interval": 86400
@@ -381,12 +381,12 @@
             "cl": "0xfcc0",
             "ep": 1,
             "eval": "Item.val = Attr.val",
-            "fn": "zcl",
+            "fn": "zcl:attr",
             "mf": "0x115f"
           },
-          "read": {"fn": "zcl", "ep": 1, "cl": "0xfcc0", "at": "0x0213", "mf": "0x115f"},
+          "read": {"fn": "zcl:attr", "ep": 1, "cl": "0xfcc0", "at": "0x0213", "mf": "0x115f"},
           "write": {
-            "fn": "zcl", "ep": 1, "cl": "0xfcc0", "at": "0x0213", "dt": "0x10", "mf": "0x115f",
+            "fn": "zcl:attr", "ep": 1, "cl": "0xfcc0", "at": "0x0213", "dt": "0x10", "mf": "0x115f",
             "eval": "Item.val"
           },
           "refresh.interval": 86400
@@ -399,12 +399,12 @@
             "cl": "0xfcc0",
             "ep": 1,
             "eval": "Item.val = Attr.val",
-            "fn": "zcl",
+            "fn": "zcl:attr",
             "mf": "0x115f"
           },
-          "read": {"fn": "zcl", "ep": 1, "cl": "0xfcc0", "at": "0x0222", "mf": "0x115f"},
+          "read": {"fn": "zcl:attr", "ep": 1, "cl": "0xfcc0", "at": "0x0222", "mf": "0x115f"},
           "write": {
-            "fn": "zcl", "ep": 1, "cl": "0xfcc0", "at": "0x0222", "dt": "0x20", "mf": "0x115f",
+            "fn": "zcl:attr", "ep": 1, "cl": "0xfcc0", "at": "0x0222", "dt": "0x20", "mf": "0x115f",
             "eval": "Item.val"
           },
           "refresh.interval": 86400
@@ -417,12 +417,12 @@
             "cl": "0xfcc0",
             "ep": 1,
             "eval": "Item.val = Attr.val",
-            "fn": "zcl",
+            "fn": "zcl:attr",
             "mf": "0x115f"
           },
-          "read": {"fn": "zcl", "ep": 1, "cl": "0xfcc0", "at": "0x0216", "mf": "0x115f"},
+          "read": {"fn": "zcl:attr", "ep": 1, "cl": "0xfcc0", "at": "0x0216", "mf": "0x115f"},
           "write": {
-            "fn": "zcl", "ep": 1, "cl": "0xfcc0", "at": "0x0216", "dt": "0x23", "mf": "0x115f",
+            "fn": "zcl:attr", "ep": 1, "cl": "0xfcc0", "at": "0x0216", "dt": "0x23", "mf": "0x115f",
             "eval": "Item.val"
           },
           "refresh.interval": 86400
@@ -543,12 +543,12 @@
             "cl": "0xfcc0",
             "ep": 1,
             "eval": "Item.val = Attr.val",
-            "fn": "zcl",
+            "fn": "zcl:attr",
             "mf": "0x115f"
           },
-          "read": {"fn": "zcl", "ep": 1, "cl": "0xfcc0", "at": "0x022b", "mf": "0x115f"},
+          "read": {"fn": "zcl:attr", "ep": 1, "cl": "0xfcc0", "at": "0x022b", "mf": "0x115f"},
           "write": {
-            "fn": "zcl", "ep": 1, "cl": "0xfcc0", "at": "0x022b", "dt": "0x20", "mf": "0x115f",
+            "fn": "zcl:attr", "ep": 1, "cl": "0xfcc0", "at": "0x022b", "dt": "0x20", "mf": "0x115f",
             "eval": "Item.val"
           },
           "refresh.interval": 86400
@@ -561,12 +561,12 @@
             "cl": "0xfcc0",
             "ep": 1,
             "eval": "Item.val = Attr.val",
-            "fn": "zcl",
+            "fn": "zcl:attr",
             "mf": "0x115f"
           },
-          "read": {"fn": "zcl", "ep": 1, "cl": "0xfcc0", "at": "0x0215", "mf": "0x115f"},
+          "read": {"fn": "zcl:attr", "ep": 1, "cl": "0xfcc0", "at": "0x0215", "mf": "0x115f"},
           "write": {
-            "fn": "zcl", "ep": 1, "cl": "0xfcc0", "at": "0x0215", "dt": "0x20", "mf": "0x115f",
+            "fn": "zcl:attr", "ep": 1, "cl": "0xfcc0", "at": "0x0215", "dt": "0x20", "mf": "0x115f",
             "eval": "Item.val"
           },
           "refresh.interval": 86400
