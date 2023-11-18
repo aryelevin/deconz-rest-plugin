@@ -572,6 +572,25 @@
           "refresh.interval": 86400
         },
         {
+          "name": "config/preset",
+          "access": "W",
+          "description": "Sends and Receives the device's communication messages.",
+          "parse": {
+            "cl": "0xfcc0",
+            "ep": 1,
+            "eval": "if ((ZclFrame.at(1) << 8 | ZclFrame.at(0)) === 0xfff2) { const size = ZclFrame.payloadSize; let text = ''; for (let i = 3; i < size; i++ ) { text += ZclFrame.at(i).toString(16).padStart(2, '0'); } Item.val = text; }",
+            "fn": "zcl:cmd",
+            "cmd": "0x0a",
+            "mf": "0x115f",
+            "at": "0xfff2"
+          },
+          "write": {
+            "fn": "zcl:cmd", "ep": 1, "cl": "0xfcc0", "cmd": "0x02", "fc": "0x14", "mf": "0x115f",
+            "eval": "'f2ff41' + Item.val"
+          },
+          "default": "00"
+        },
+        {
           "name": "config/on"
         },
         {
