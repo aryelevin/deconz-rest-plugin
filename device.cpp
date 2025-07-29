@@ -742,8 +742,6 @@ void DEV_BasicClusterStateHandler(Device *device, const Event &event)
                 continue;
             }
 
-            DBG_Printf(DBG_DEV, "!!DEV_FillItemFromBasicCluster: " FMT_MAC "\n", FMT_MAC_CAST(device->key()));
-
             if (DEV_ZclRead(device, device->item(it.suffix), it.clusterId, it.attrId))
             {
                 DBG_Printf(DBG_DEV, "DEV_ZclRead: " FMT_MAC "\n", FMT_MAC_CAST(device->key()));
@@ -754,11 +752,9 @@ void DEV_BasicClusterStateHandler(Device *device, const Event &event)
             DBG_Printf(DBG_DEV, "DEV failed to read %s: " FMT_MAC "\n", it.suffix, FMT_MAC_CAST(device->key()));
             break;
         }
-                DBG_Printf(DBG_DEV, "DEV_After for loop: " FMT_MAC "\n", FMT_MAC_CAST(device->key()));
 
         if (okCount != items.size())
         {
-                DBG_Printf(DBG_DEV, "DEV_okCount != items.size(): " FMT_MAC "\n", FMT_MAC_CAST(device->key()));
             d->setState(DEV_InitStateHandler);
         }
         else
@@ -786,10 +782,10 @@ void DEV_BasicClusterStateHandler(Device *device, const Event &event)
             }
         }
     }
-    else if (event.what() == REventZclResponse /*&& !event.hasData()*/)
+    else if (event.what() == REventZclResponse /*&& !event.hasData()*/ && EventZclStatus(event) == deCONZ::ZclUnsupportedAttributeStatus)
     {
         uint8_t status = EventZclStatus(event);
-        DBG_Printf(DBG_DEV, "DEV received event.what() %s: " FMT_MAC ", event.hasData %i, EventZclStatus %i, ZclUnsupportedAttributeStatus: %i\n", event.what(), FMT_MAC_CAST(device->key()), event.hasData(), status, deCONZ::ZclUnsupportedAttributeStatus);
+        DBG_Printf(DBG_DEV, "DEV received event.what() %s: " FMT_MAC ", event.hasData %i, EventZclStatus %i, ZclUnsupportedAttributeStatus: %i, event.resource() %s\n", event.what(), FMT_MAC_CAST(device->key()), event.hasData(), status, deCONZ::ZclUnsupportedAttributeStatus, event.resource());
         d->setState(DEV_InitStateHandler); // ok re-evaluate
         DEV_EnqueueEvent(device, REventAwake);
     }
@@ -2116,7 +2112,6 @@ void DEV_PollBusyStateHandler(Device *device, const Event &event)
             {
                 if (status == deCONZ::ZclUnsupportedAttributeStatus)
                 {
-                DBG_Printf(DBG_DEV, "DEV_PollBusyStateHandler item->zclUnsupportedAttribute(): " FMT_MAC "\n", FMT_MAC_CAST(device->key()));
                     const auto &pi = d->pollItems.back();
                     Resource *r = DEV_GetResource(pi.resource->handle());
                     ResourceItem *item = r ? r->item(pi.item->descriptor().suffix) : nullptr;
