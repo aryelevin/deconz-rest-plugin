@@ -788,7 +788,7 @@ void DEV_BasicClusterStateHandler(Device *device, const Event &event)
     }
     else if (event.what() == REventZclResponse)
     {
-        DBG_Printf(DBG_DEV, "DEV received event.what() %s: " FMT_MAC ", event.hasData %i\n", event.what(), event.hasData(), FMT_MAC_CAST(device->key()));
+        DBG_Printf(DBG_DEV, "DEV received event.what() %s: " FMT_MAC ", event.hasData %i\n", event.what(), FMT_MAC_CAST(device->key()), event.hasData());
         d->setState(DEV_InitStateHandler); // ok re-evaluate
         DEV_EnqueueEvent(device, REventAwake);
     }
