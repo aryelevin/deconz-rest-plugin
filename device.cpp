@@ -654,7 +654,7 @@ bool DEV_FillItemFromBasicCluster(Device *device, const char *itemSuffix, deCONZ
 
         const QVariant v = at->toVariant();
 
-        if (!v.isNull() && ditem->setValue(v))
+        if ((!v.isNull() && ditem->setValue(v)) || (v.isNull() && itemSuffix == QString(RAttrManufacturerName) && ditem->setValue("ZCL_UNSUPPORTED_ATTRIBUTE")))
         {
             return true;
         }
@@ -786,7 +786,7 @@ void DEV_BasicClusterStateHandler(Device *device, const Event &event)
             }
         }
     }
-    else if (event.what() == REventZclResponse)
+    else if (event.what() == REventZclResponse && !event.hasData() && event.resource)
     {
         DBG_Printf(DBG_DEV, "DEV received event.what() %s: " FMT_MAC ", event.hasData %i\n", event.what(), FMT_MAC_CAST(device->key()), event.hasData());
         d->setState(DEV_InitStateHandler); // ok re-evaluate
