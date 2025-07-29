@@ -708,7 +708,7 @@ bool DEV_ZclRead(Device *device, ResourceItem *item, deCONZ::ZclClusterId_t clus
  */
 void DEV_BasicClusterStateHandler(Device *device, const Event &event)
 {
-                DBG_Printf(DBG_DEV, "DEV_BasicClusterStateHandler called: " FMT_MAC "\n", FMT_MAC_CAST(device->key()));
+                DBG_Printf(DBG_DEV, "DEV_BasicClusterStateHandler called: " FMT_MAC ", event.what(): %s\n", FMT_MAC_CAST(device->key()), event.what());
     DevicePrivate *d = device->d;
 
     if (event.what() == REventStateEnter)
