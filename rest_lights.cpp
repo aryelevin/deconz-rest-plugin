@@ -3992,7 +3992,9 @@ int DeRestPluginPrivate::resetDeviceOnly(const ApiRequest &req, ApiResponse &rsp
 
     deCONZ::ApsDataRequest reqAps;
 
+#if QT_VERSION < QT_VERSION_CHECK(5,15,0)
     reqAps.setTxOptions(0);
+#endif
     reqAps.setDstEndpoint(ZDO_ENDPOINT);
     reqAps.setDstAddressMode(deCONZ::ApsExtAddress);
     reqAps.dstAddress().setExt(lightNode->address().ext());
@@ -4015,7 +4017,7 @@ int DeRestPluginPrivate::resetDeviceOnly(const ApiRequest &req, ApiResponse &rsp
     {
         resetDeviceApsRequestId = reqAps.id();
         resetDeviceState = ResetWaitConfirm;
-        resetDeviceTimer->start(2000);
+        resetDeviceTimer->start(WAIT_CONFIRM);
         DBG_Printf(DBG_INFO, "reset device apsdeDataRequest success\n");
     }
     else
