@@ -708,7 +708,6 @@ bool DEV_ZclRead(Device *device, ResourceItem *item, deCONZ::ZclClusterId_t clus
  */
 void DEV_BasicClusterStateHandler(Device *device, const Event &event)
 {
-                DBG_Printf(DBG_DEV, "DEV_BasicClusterStateHandler called: " FMT_MAC ", event.what(): %s\n", FMT_MAC_CAST(device->key()), event.what());
     DevicePrivate *d = device->d;
 
     if (event.what() == REventStateEnter)
@@ -785,7 +784,9 @@ void DEV_BasicClusterStateHandler(Device *device, const Event &event)
     else if (event.what() == REventZclResponse /*&& !event.hasData()*/ && EventZclStatus(event) == deCONZ::ZclUnsupportedAttributeStatus)
     {
         uint8_t status = EventZclStatus(event);
-        DBG_Printf(DBG_DEV, "DEV received event.what() %s: " FMT_MAC ", event.hasData %i, EventZclStatus %i, ZclUnsupportedAttributeStatus: %i, event.resource() %s\n", event.what(), FMT_MAC_CAST(device->key()), event.hasData(), status, deCONZ::ZclUnsupportedAttributeStatus, event.resource());
+        ResourceItem *item device->item(RAttrManufacturerName);
+        bool isUnsupported = item->zclUnsupportedAttribute();
+        DBG_Printf(DBG_DEV, "DEV received event.what() %s: " FMT_MAC ", event.hasData %i, EventZclStatus %i, ZclUnsupportedAttributeStatus: %i, event.resource(): %s, device->item(RAttrManufacturerName): %i\n", event.what(), FMT_MAC_CAST(device->key()), event.hasData(), status, deCONZ::ZclUnsupportedAttributeStatus, event.resource(), isUnsupported);
         d->setState(DEV_InitStateHandler); // ok re-evaluate
         DEV_EnqueueEvent(device, REventAwake);
     }
@@ -1857,7 +1858,6 @@ std::vector<DEV_PollItem> DEV_GetPollItems(Device *device)
 
             if (item->zclUnsupportedAttribute())
             {
-                DBG_Printf(DBG_DEV, "DEV_GetPollItems item->zclUnsupportedAttribute(): " FMT_MAC "\n", FMT_MAC_CAST(device->key()));
                 continue;
             }
 
