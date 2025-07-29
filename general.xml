@@ -6008,7 +6008,7 @@ Contactor > On/off=0003 - HP/HC=0004</description>
             <description>Could used to write data values to VRF Controller T1</description>
           </attribute>
           <attribute id="0xFFF2" name="External temperature/S1 Scene Panel Communication" type="ostring" mfcode="0x115f" access="rw" required="m">
-            <description>Could used to write external temperature values to TRV</description>
+            <description>Could used to write external temperature values to TRV or data values to S1 Scene Panel</description>
           </attribute>
           <attribute id="0xFFFD" name="Cluster Revision" type="u16" mfcode="0x115f" access="rw" required="m"> </attribute>
         </attribute-set>
