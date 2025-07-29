@@ -786,6 +786,12 @@ void DEV_BasicClusterStateHandler(Device *device, const Event &event)
             }
         }
     }
+    else if (event.what() == REventZclResponse)
+    {
+        DBG_Printf(DBG_DEV, "DEV received event.what() %s: " FMT_MAC ", event.hasData %i\n", event.what(), event.hasData(), FMT_MAC_CAST(device->key()));
+        d->setState(DEV_InitStateHandler); // ok re-evaluate
+        DEV_EnqueueEvent(device, REventAwake);
+    }
     else if (event.what() == RAttrManufacturerName || event.what() == RAttrModelId)
     {
         DBG_Printf(DBG_DEV, "DEV received %s: " FMT_MAC "\n", event.what(), FMT_MAC_CAST(device->key()));
