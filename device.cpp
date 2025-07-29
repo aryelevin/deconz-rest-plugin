@@ -788,7 +788,8 @@ void DEV_BasicClusterStateHandler(Device *device, const Event &event)
     }
     else if (event.what() == REventZclResponse /*&& !event.hasData()*/)
     {
-        DBG_Printf(DBG_DEV, "DEV received event.what() %s: " FMT_MAC ", event.hasData %i\n", event.what(), FMT_MAC_CAST(device->key()), event.hasData());
+        uint8_t status = EventZclStatus(event);
+        DBG_Printf(DBG_DEV, "DEV received event.what() %s: " FMT_MAC ", event.hasData %i, EventZclStatus %i, ZclUnsupportedAttributeStatus: %i\n", event.what(), FMT_MAC_CAST(device->key()), event.hasData(), status, deCONZ::ZclUnsupportedAttributeStatus);
         d->setState(DEV_InitStateHandler); // ok re-evaluate
         DEV_EnqueueEvent(device, REventAwake);
     }
