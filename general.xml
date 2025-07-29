@@ -6004,6 +6004,9 @@ Contactor > On/off=0003 - HP/HC=0004</description>
           </attribute>
           <attribute id="0xF001" name="Unknown" type="u32" mfcode="0x115f" access="rw" required="m"> </attribute>
           <attribute id="0xF002" name="Unknown" type="u32" mfcode="0x115f" access="rw" required="m"> </attribute>
+          <attribute id="0xFFF1" name="VRF Controller T1 Communication" type="ostring" mfcode="0x115f" access="rw" required="m">
+            <description>Could used to write data values to VRF Controller T1</description>
+          </attribute>
           <attribute id="0xFFF2" name="External temperature" type="ostring" mfcode="0x115f" access="r" required="m">
             <description>Could used to write external temperature values to TRV</description>
           </attribute>
