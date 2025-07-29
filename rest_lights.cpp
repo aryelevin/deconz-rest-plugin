@@ -3984,6 +3984,7 @@ int DeRestPluginPrivate::resetDeviceOnly(const ApiRequest &req, ApiResponse &rsp
         return REQ_READY_SEND;
     }
 
+    // From here the code have been taken from reset_device.cpp file...
     DBG_Printf(DBG_INFO, "reset device retries: %i\n", /*retryCount*/1);
     // send mgmt_leave_request
     lastNodeAddressExt = lightNode->address().ext();
@@ -4017,7 +4018,7 @@ int DeRestPluginPrivate::resetDeviceOnly(const ApiRequest &req, ApiResponse &rsp
     {
         resetDeviceApsRequestId = reqAps.id();
         resetDeviceState = ResetWaitConfirm;
-        resetDeviceTimer->start(WAIT_CONFIRM);
+        resetDeviceTimer->start(2000); // WAIT_CONFIRM
         DBG_Printf(DBG_INFO, "reset device apsdeDataRequest success\n");
     }
     else
