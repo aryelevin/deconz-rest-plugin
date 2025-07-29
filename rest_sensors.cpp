@@ -1708,6 +1708,7 @@ int DeRestPluginPrivate::changeSensorConfig(const ApiRequest &req, ApiResponse &
                     }
                     else if (devManaged && rsub)
                     {
+                        DBG_Printf(DBG_INFO_L2, "debug test send RConfigDisplayFlipped\n");
                         data.uinteger = data.boolean; // Use integer representation
                         change.addTargetValue(rid.suffix, data.uinteger);
                         rsub->addStateChange(change);
