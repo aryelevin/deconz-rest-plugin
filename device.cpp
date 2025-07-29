@@ -730,17 +730,22 @@ void DEV_BasicClusterStateHandler(Device *device, const Event &event)
         {
             if (DEV_FillItemFromSubdevices(device, it.suffix, subDevices))
             {
+                DBG_Printf(DBG_DEV, "DEV_FillItemFromSubdevices: " FMT_MAC "\n", FMT_MAC_CAST(device->key()));
                 okCount++;
                 continue;
             }
             else if (DEV_FillItemFromBasicCluster(device, it.suffix, it.clusterId,  it.attrId))
             {
+                DBG_Printf(DBG_DEV, "DEV_FillItemFromBasicCluster: " FMT_MAC "\n", FMT_MAC_CAST(device->key()));
                 okCount++;
                 continue;
             }
 
+            DBG_Printf(DBG_DEV, "!!DEV_FillItemFromBasicCluster: " FMT_MAC "\n", FMT_MAC_CAST(device->key()));
+
             if (DEV_ZclRead(device, device->item(it.suffix), it.clusterId, it.attrId))
             {
+                DBG_Printf(DBG_DEV, "DEV_ZclRead: " FMT_MAC "\n", FMT_MAC_CAST(device->key()));
                 d->startStateTimer(MaxConfirmTimeout, StateLevel0);
                 return; // keep state and wait for REventStateTimeout or response
             }
@@ -748,9 +753,11 @@ void DEV_BasicClusterStateHandler(Device *device, const Event &event)
             DBG_Printf(DBG_DEV, "DEV failed to read %s: " FMT_MAC "\n", it.suffix, FMT_MAC_CAST(device->key()));
             break;
         }
+                DBG_Printf(DBG_DEV, "DEV_After for loop: " FMT_MAC "\n", FMT_MAC_CAST(device->key()));
 
         if (okCount != items.size())
         {
+                DBG_Printf(DBG_DEV, "DEV_okCount != items.size(): " FMT_MAC "\n", FMT_MAC_CAST(device->key()));
             d->setState(DEV_InitStateHandler);
         }
         else
