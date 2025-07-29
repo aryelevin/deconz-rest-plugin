@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.13)
 
-project(de_rest_plugin VERSION 2.24.02 LANGUAGES C;CXX)
+project(de_rest_plugin VERSION 2.30.02 LANGUAGES C;CXX)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -11,12 +11,17 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+set(CMAKE_C_VISIBILITY_PRESET hidden)
+set(CMAKE_CXX_VISIBILITY_PRESET hidden)
+
 find_package(Qt5 COMPONENTS Core Widgets Network WebSockets REQUIRED)
 find_package(Git REQUIRED)
 
 if (UNIX)
     include(FindPkgConfig)
     pkg_check_modules (OPENSSL openssl)
+else()
+    find_package(OpenSSL REQUIRED)
 endif()
 
 if (NOT DECONZ_FULL_BUILD)
@@ -27,21 +32,16 @@ if (NOT DECONZ_FULL_BUILD)
 
 include(FetchContent)
 
-FetchContent_Declare(
-  deconzlib
-  GIT_REPOSITORY https://github.com/dresden-elektronik/deconz-lib.git
-  GIT_TAG        main
-)
-# FetchContent_MakeAvailable(deconzlib)
-# FetchContent_MakeAvailable requires CMake 3.14, but Debian Buster has only 3.13
 FetchContent_GetProperties(deconzlib)
 if (NOT deconzlib_POPULATED)
-    FetchContent_Populate(deconzlib)
+    FetchContent_Populate(deconzlib
+        GIT_REPOSITORY https://github.com/dresden-elektronik/deconz-lib.git
+        GIT_TAG        main
+    )
     add_subdirectory(${deconzlib_SOURCE_DIR} ${deconzlib_BINARY_DIR})
 endif()
 
-endif()
-
+endif() # NOT DECONZ_FULL_BUILD
 #----------------------------------------------------------------------
 
 set(PLUGIN_INCLUDE_FILES
@@ -66,12 +66,11 @@ set(PLUGIN_INCLUDE_FILES
     device.h
     device_access_fn.h
     device_compat.h
+    device_ddf_bundle.h
     device_ddf_init.h
     device_descriptions.h
     device_tick.h
-    device_js/device_js_duktape.h
     device_js/device_js.h
-    device_js/device_js_wrappers.h
     event.h
     event_emitter.h
     fan_control.h
@@ -91,6 +90,8 @@ set(PLUGIN_INCLUDE_FILES
     resource.h
     resourcelinks.h
     rest_alarmsystems.h
+    rest_api.h
+    rest_ddf.h
     rest_devices.h
     rest_node_base.h
     rule.h
@@ -111,6 +112,7 @@ set(PLUGIN_INCLUDE_FILES
     utils/ArduinoJson.h
     utils/ArduinoJson-v6.19.4.h
     utils/bufstring.h
+    utils/scratchmem.h
     utils/stringcache.h
     utils/utils.h
     websocket_server.h
@@ -144,23 +146,21 @@ add_library(${PROJECT_NAME} SHARED
     crypto/password.cpp
     crypto/random.cpp
     crypto/scrypt.cpp
+    cj/cj_all.c
     database.cpp
     daylight.cpp
     de_otau.cpp
     device_access_fn.cpp
     device_compat.cpp
     device.cpp
+    device_ddf_bundle.cpp
     device_ddf_init.cpp
     device_descriptions.cpp
     device_js/duktape.c
-    device_js/device_js.cpp
     device_js/device_js_duktape.cpp
-    device_js/device_js_wrappers.cpp
-    device_setup.cpp
     device_tick.cpp
     de_web_plugin.cpp
     de_web_widget.cpp
-    diagnostics.cpp
     discovery.cpp
     electrical_measurement.cpp
     event.cpp
@@ -182,6 +182,7 @@ add_library(${PROJECT_NAME} SHARED
     light_node.cpp
     occupancy_sensing.cpp
     permitJoin.cpp
+    plugin_am.cpp
     poll_control.cpp
     poll_manager.cpp
     power_configuration.cpp
@@ -191,8 +192,10 @@ add_library(${PROJECT_NAME} SHARED
     resource.cpp
     resourcelinks.cpp
     rest_alarmsystems.cpp
+    rest_api.cpp
     rest_capabilities.cpp
     rest_configuration.cpp
+    rest_ddf.cpp
     rest_devices.cpp
     rest_gateways.cpp
     rest_groups.cpp
@@ -224,6 +227,7 @@ add_library(${PROJECT_NAME} SHARED
     ui/text_lineedit.cpp
     upnp.cpp
     utils/bufstring.cpp
+    utils/scratchmem.cpp
     utils/stringcache.cpp
     utils/utils.cpp
     websocket_server.cpp
@@ -275,9 +279,15 @@ target_compile_definitions(${PROJECT_NAME}
     GW_DEFAULT_NAME="\"\"Phoscon-GW\"\""
 )
 
+target_include_directories(${PROJECT_NAME} PRIVATE cj)
+
 if (OPENSSL_FOUND)
     target_compile_definitions(${PROJECT_NAME} PRIVATE HAS_OPENSSL=1)
-    target_include_directories(${PROJECT_NAME} PRIVATE ${OPENSSL_INCLUDE_DIRS})
+    if (APPLE)
+        target_include_directories(${PROJECT_NAME} PRIVATE ${OPENSSL_INCLUDE_DIRS})
+    else()
+        target_include_directories(${PROJECT_NAME} PRIVATE ${OPENSSL_INCLUDE_DIR})
+    endif()
 endif()
 
 if (Qt5Core_VERSION_STRING VERSION_LESS "5.15.0")
@@ -294,6 +304,7 @@ target_link_libraries(${PROJECT_NAME}
     PRIVATE Qt5::WebSockets
     PRIVATE SQLite::SQLite3
     PRIVATE deCONZLib
+    PRIVATE am_plugin_hdr
 )
 
 #--------------------------------------------------------------

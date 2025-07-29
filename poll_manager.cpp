@@ -198,6 +198,13 @@ void PollManager::pollTimerFired()
     {
         pollState = StateIdle;
         timer->start(50);
+
+        // Notify the DeviceTick manager that legacy code is done polling.
+        Device *device = DEV_GetDevice(plugin->m_devices, dstAddr.ext());
+        if (device)
+        {
+            emit device->eventNotify(Event(device->prefix(), REventPollDone, 0, device->key()));
+        }
         emit done();
         return;
     }
@@ -225,13 +232,13 @@ void PollManager::pollTimerFired()
     const LightNode *lightNode = nullptr;
     if (r && r->prefix() == RLights)
     {
-        restNode = plugin->getLightNodeForId(pitem.id);
+        restNode = dynamic_cast<RestNodeBase*>(r);
         lightNode = dynamic_cast<LightNode*>(restNode);
         item = r->item(RStateReachable);
     }
     else if (r && r->prefix() == RSensors)
     {
-        restNode = plugin->getSensorNodeForId(pitem.id);
+        restNode = dynamic_cast<RestNodeBase*>(r);
         item = r->item(RConfigReachable);
     }
 

@@ -99,11 +99,16 @@ public:
     Device(const Device &) = delete;
     explicit Device(DeviceKey key, deCONZ::ApsController*apsCtrl, QObject *parent = nullptr);
     ~Device();
+    void setDeviceId(int id);
+    void setCreationTime(int64_t creationTime); //! device creation time in msecs
+    int64_t creationTime() const;
+    int deviceId() const;
     void addSubDevice(Resource *sub);
     DeviceKey key() const;
     const deCONZ::Node *node() const;
     bool managed() const;
     void setManaged(bool managed);
+    void setSupportsMgmtBind(bool supported);
     void handleEvent(const Event &event, DEV_StateLevel level = StateLevel0);
     void timerEvent(QTimerEvent *event) override;
     qint64 lastAwakeMs() const;
@@ -162,6 +167,7 @@ Resource *DEV_GetResource(Resource::Handle hnd);
 /*! Returns deCONZ core node for a given \p extAddress.
  */
 const deCONZ::Node *DEV_GetCoreNode(uint64_t extAddress);
+uint8_t DEV_ResolveDestinationEndpoint(uint64_t extAddr, uint8_t hintEp, uint16_t cluster, uint8_t frameControl);
 
 void DEV_CheckReachable(Device *device);
 

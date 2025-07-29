@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 dresden elektronik ingenieurtechnik gmbh.
+ * Copyright (c) 2021-2024 dresden elektronik ingenieurtechnik gmbh.
  * All rights reserved.
  *
  * The software in this package is published under the terms of the BSD
@@ -9,6 +9,7 @@
  */
 
 #include <QTimeZone>
+#include "deconz/u_assert.h"
 #include "device_access_fn.h"
 #include "device_descriptions.h"
 #include "device_js/device_js.h"
@@ -16,6 +17,8 @@
 #include "resource.h"
 #include "zcl/zcl.h"
 
+
+#define CMD_ID_ANY 0x100
 #define TIME_CLUSTER_ID     0x000A
 
 #define TIME_ATTRID_TIME                    0x0000
@@ -157,6 +160,7 @@ struct WriteFunction
 };
 
 quint8 zclNextSequenceNumber(); // todo defined in de_web_plugin_private.h
+uint8_t DEV_ResolveDestinationEndpoint(uint64_t extAddr, uint8_t hintEp, uint16_t cluster, uint8_t frameControl); // device.h
 
 /*! Helper to get an unsigned int from \p var which might be a number or string value.
 
@@ -199,8 +203,16 @@ static ZCL_Param getZclParam(const QVariantMap &param)
 
     if (param.contains(QLatin1String("cmd"))) // optional
     {
-        result.commandId = variantToUint(param["cmd"], UINT8_MAX, &ok);
-        result.hasCommandId = ok ? 1 : 0;
+        if (param["cmd"].toString() == QLatin1String("any"))
+        {
+            result.commandId = CMD_ID_ANY;
+            result.hasCommandId = 1;
+        }
+        else
+        {
+            result.commandId = variantToUint(param["cmd"], UINT32_MAX, &ok);
+            result.hasCommandId = ok ? 1 : 0;
+        }
     }
     else
     {
@@ -214,6 +226,7 @@ static ZCL_Param getZclParam(const QVariantMap &param)
     }
     else
     {
+        result.frameControl = 0;
         result.hasFrameControl = 0;
     }
 
@@ -270,15 +283,25 @@ quint8 resolveAutoEndpoint(const Resource *r)
 {
     quint8 result = AutoEndpoint;
 
-    // hack to get endpoint. todo find better solution
-    const auto ls = r->item(RAttrUniqueId)->toString().split('-', SKIP_EMPTY_PARTS);
-    if (ls.size() >= 2)
+    U_ASSERT(r);
+    if (r)
     {
-        bool ok = false;
-        uint ep = ls[1].toUInt(&ok, 16);
-        if (ok && ep < BroadcastEndpoint)
+        const ResourceItem *itemUniqueId = r->item(RAttrUniqueId);
+
+        U_ASSERT(itemUniqueId);
+        if (itemUniqueId)
         {
-            result = ep;
+            // hack to get endpoint. todo find better solution
+            const auto ls = itemUniqueId->toString().split('-', SKIP_EMPTY_PARTS);
+            if (ls.size() >= 2)
+            {
+                bool ok = false;
+                uint ep = ls[1].toUInt(&ok, 16);
+                if (ok && ep < BroadcastEndpoint)
+                {
+                    result = ep;
+                }
+            }
         }
     }
 
@@ -525,9 +548,16 @@ bool parseZclAttribute(Resource *r, ResourceItem *item, const deCONZ::ApsDataInd
             return result;
         }
 
-        if (param.hasCommandId && param.commandId != zclFrame.commandId())
+        if (param.hasCommandId)
         {
-            return result;
+            if (param.commandId == CMD_ID_ANY)
+            {
+
+            }
+            else if (param.commandId != zclFrame.commandId())
+            {
+                return result;
+            }
         }
         else if (!param.hasCommandId && param.attributeCount == 0)
         {
@@ -564,7 +594,10 @@ bool parseZclAttribute(Resource *r, ResourceItem *item, const deCONZ::ApsDataInd
         return result;
     }
     
-    if (!zclParam.hasCommandId && zclFrame.commandId() != deCONZ::ZclReadAttributesResponseId && zclFrame.commandId() != deCONZ::ZclReportAttributesId)
+    if (!zclParam.hasCommandId &&
+         zclFrame.isProfileWideCommand() &&
+         zclFrame.commandId() != deCONZ::ZclReadAttributesResponseId &&
+         zclFrame.commandId() != deCONZ::ZclReportAttributesId)
     {
         return result;
     }
@@ -581,9 +614,16 @@ bool parseZclAttribute(Resource *r, ResourceItem *item, const deCONZ::ApsDataInd
 
     if (zclParam.attributeCount == 0) // attributes are optional
     {
-        if (zclParam.hasCommandId && zclParam.commandId != zclFrame.commandId())
+        if (zclParam.hasCommandId)
         {
-            return result;
+            if (zclParam.commandId == CMD_ID_ANY)
+            {
+
+            }
+            else if (zclParam.commandId != zclFrame.commandId())
+            {
+                return result;
+            }
         }
         
         if (evalZclFrame(r, item, ind, zclFrame, parseParameters))
@@ -719,6 +759,12 @@ bool parseTuyaData(Resource *r, ResourceItem *item, const deCONZ::ApsDataIndicat
         switch (dataType)
         {
         case TuyaDataTypeRaw:
+        {
+            // Not setting value because need to much ressource.
+            zclDataType = deCONZ::ZclCharacterString;
+        }
+        break;
+            
         case TuyaDataTypeString:
             return result; // TODO implement?
 
@@ -1701,6 +1747,7 @@ static DA_ReadResult readZclAttribute(const Resource *r, const ResourceItem *ite
     if (param.endpoint == AutoEndpoint)
     {
         param.endpoint = resolveAutoEndpoint(r);
+        param.endpoint = DEV_ResolveDestinationEndpoint(extAddr->toNumber(), param.endpoint, param.clusterId, param.frameControl);
 
         if (param.endpoint == AutoEndpoint)
         {
@@ -1766,6 +1813,7 @@ bool writeZclAttribute(const Resource *r, const ResourceItem *item, deCONZ::ApsC
     if (param.endpoint == AutoEndpoint)
     {
         param.endpoint = resolveAutoEndpoint(r);
+        param.endpoint = DEV_ResolveDestinationEndpoint(extAddr->toNumber(), param.endpoint, param.clusterId, param.frameControl);
 
         if (param.endpoint == AutoEndpoint)
         {
@@ -1883,6 +1931,17 @@ static DA_ReadResult sendZclCommand(const Resource *r, const ResourceItem *item,
         else
         {
             DBG_Printf(DBG_DDF, "failed to evaluate expression for %s/%s: %s, err: %s\n", qPrintable(r->item(RAttrUniqueId)->toString()), item->descriptor().suffix, qPrintable(expr), qPrintable(engine.errorString()));
+            return result;
+        }
+    }
+
+    if (param.endpoint == BroadcastEndpoint || param.endpoint == AutoEndpoint)
+    {
+        param.endpoint = resolveAutoEndpoint(r);
+        param.endpoint = DEV_ResolveDestinationEndpoint(extAddr->toNumber(), param.endpoint, param.clusterId, param.frameControl);
+
+        if (param.endpoint == BroadcastEndpoint || param.endpoint == AutoEndpoint)
+        {
             return result;
         }
     }

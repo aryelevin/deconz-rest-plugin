@@ -31,6 +31,17 @@ enum ApiDataType
     DataTypeTimePattern
 };
 
+class ApiAttribute
+{
+    public:
+        QVariantMap *map;
+        QString key, top;
+        ApiAttribute(QVariantMap *m, QString k, QString t) :
+            map(m),
+            key(k),
+            top(t) { }
+};
+
 struct R_Stats
 {
     size_t toString = 0;
@@ -61,6 +72,7 @@ extern const char *REventPermitjoinEnabled;
 extern const char *REventPermitjoinDisabled;
 extern const char *REventPermitjoinRunning;
 extern const char *REventPoll;
+extern const char *REventPollDone;
 extern const char *REventDDFReload;
 extern const char *REventDDFInitRequest;
 extern const char *REventDDFInitResponse;
@@ -78,14 +90,18 @@ extern const char *REventTick;
 extern const char *REventTimerFired;
 extern const char *REventZclResponse;
 extern const char *REventZclReadReportConfigResponse;
+extern const char *REventZdpReload;
 extern const char *REventZdpMgmtBindResponse;
 extern const char *REventZdpResponse;
 
 // resouce suffixes: state/buttonevent, config/on, ...
 extern const char *RInvalidSuffix;
 
+extern const char *RAttrAppVersion;
 extern const char *RAttrClass;
 extern const char *RAttrConfigId;
+extern const char *RAttrDdfHash;
+extern const char *RAttrDdfPolicy;
 extern const char *RAttrExtAddress;
 extern const char *RAttrGroupAddress;
 extern const char *RAttrId;
@@ -93,9 +109,14 @@ extern const char *RAttrLastAnnounced;
 extern const char *RAttrLastSeen;
 extern const char *RAttrLevelMin;
 extern const char *RAttrManufacturerName;
+extern const char *RAttrMode;
 extern const char *RAttrModelId;
 extern const char *RAttrName;
 extern const char *RAttrNwkAddress;
+extern const char *RCapOtauFileVersion;
+extern const char *RCapOtauImageType;
+extern const char *RCapOtauManufacturerCode;
+extern const char *RAttrOtaVersion;
 extern const char *RAttrPowerOnCt;
 extern const char *RAttrPowerOnLevel;
 extern const char *RAttrPowerup;
@@ -106,6 +127,7 @@ extern const char *RAttrSwVersion;
 extern const char *RAttrSwVersionBis;
 extern const char *RAttrType;
 extern const char *RAttrUniqueId;
+extern const char *RAttrZoneType;
 
 extern const char *RActionScene;
 
@@ -175,6 +197,7 @@ extern const char *RStateOrientationZ;
 extern const char *RStatePM2_5; // Deprecated
 extern const char *RStatePanel;
 extern const char *RStatePower;
+extern const char *RStatePowerDivisor;
 extern const char *RStatePresence;
 extern const char *RStatePresenceEvent;
 extern const char *RStatePressure;
@@ -255,11 +278,13 @@ extern const char *RConfigArmedStayTriggerDuration;
 extern const char *RConfigAutoUpdateFWEnabled;
 extern const char *RConfigBattery;
 extern const char *RConfigBatteryBis;
+extern const char *RConfigBriCoupleCt;
 extern const char *RConfigBriExecuteIfOff;
 extern const char *RConfigBriMax;
 extern const char *RConfigBriMin;
 extern const char *RConfigBriOnLevel;
 extern const char *RConfigBriOnOffTransitiontime;
+extern const char *RConfigBriOptions;
 extern const char *RConfigBriStartup;
 extern const char *RConfigCheckin;
 extern const char *RConfigClickMode;
@@ -277,6 +302,7 @@ extern const char *RConfigCoolSetpoint;
 extern const char *RConfigCtMax; // Deprecated
 extern const char *RConfigCtMin; // Deprecated
 extern const char *RConfigDelay;
+extern const char *RConfigDetectionRange;
 extern const char *RConfigDeviceMode;
 extern const char *RConfigDeviceModeBis;
 extern const char *RConfigDisarmedEntryDelay;
@@ -307,6 +333,7 @@ extern const char *RConfigLat;
 extern const char *RConfigLCDAutoBrightnessEnabled;
 extern const char *RConfigLCDBrightness;
 extern const char *RConfigLedIndication;
+extern const char *RConfigLoadBalancing;
 extern const char *RConfigLocalTime;
 extern const char *RConfigLock;
 extern const char *RConfigLocked;
@@ -320,6 +347,7 @@ extern const char *RConfigOnStartup;
 extern const char *RConfigPending;
 extern const char *RConfigPreset;
 extern const char *RConfigPulseConfiguration;
+extern const char *RConfigRadiatorCovered;
 extern const char *RConfigReachable;
 extern const char *RConfigReportGrid;
 extern const char *RConfigResetPresence;
@@ -378,6 +406,7 @@ extern const char *RConfigUsertest;
 extern const char *RConfigVolume;
 extern const char *RConfigWindowCoveringType;
 extern const char *RConfigWindowOpen;
+extern const char *RConfigWindowOpenDetectionEnabled;
 
 #define R_ALERT_DEFAULT             QVariant(QLatin1String("none"))
 #define R_SENSITIVITY_MAX_DEFAULT   2
@@ -388,8 +417,6 @@ extern const QStringList RStateAlertValues;
 extern const QStringList RStateAlertValuesTriggerEffect;
 
 extern const QStringList RStateEffectValues;
-#define R_EFFECT_NONE               0
-#define R_EFFECT_COLORLOOP          1
 extern const QStringList RStateEffectValuesMueller;
 extern const QStringList RStateEffectValuesXmasLightStrip;
 
@@ -436,14 +463,13 @@ public:
     double validMin = 0;
     double validMax = 0;
     quint16 flags = 0;
+    ApiAttribute toApi(QVariantMap &attr, bool event = false) const;
 };
 
 class Resource;
 class ResourceItem;
 
 using ItemString = BufString<16>;
-
-extern const ResourceItemDescriptor rInvalidItemDescriptor;
 
 class ResourceItem
 {
@@ -457,6 +483,8 @@ public:
         FlagAwakeOnSet      = 0x10, // REventAwake will be generated when item is set after parse
         FlagImplicit        = 0x20, // the item is always present for a specific resource type
         FlagDynamicDescriptor = 0x40, // ResourceItemDescriptor is dynamic (not specified in code)
+        FlagNeedStore      = 0x80,   // set when item needs to be stored to database
+        FlagZclUnsupportedAttr = 0x100  // set when the "read" function failed with ZCL unsupported attribute status
     };
 
     enum ValueSource
@@ -475,6 +503,9 @@ public:
     bool needPushSet() const;
     bool needPushChange() const;
     void clearNeedPush();
+    bool needStore() const;
+    void setNeedStore();
+    void clearNeedStore();
     bool pushOnSet() const;
     void setPushOnSet(bool enable);
     bool pushOnChange() const;
@@ -483,9 +514,12 @@ public:
     void setAwake(bool awake);
     bool implicit() const;
     void setImplicit(bool implicit);
+    void setZclUnsupportedAttribute();
+    bool zclUnsupportedAttribute() const;
     const QString &toString() const;
     QLatin1String toLatin1String() const;
     const char *toCString() const;
+    unsigned atomIndex() const { return m_strHandle; }
     qint64 toNumber() const;
     qint64 toNumberPrevious() const;
     deCONZ::SteadyTimeRef lastZclReport() const { return m_lastZclReport; }
@@ -495,9 +529,11 @@ public:
     deCONZ::TimeSeconds refreshInterval() const { return m_refreshInterval; }
     void setRefreshInterval(deCONZ::TimeSeconds interval) { m_refreshInterval = interval; }
     void setZclProperties(const ZCL_Param &param) { m_zclParam = param; }
+    bool setValue(const char *str, int length, ValueSource source = SourceUnknown);
     bool setValue(const QString &val, ValueSource source = SourceUnknown);
     bool setValue(qint64 val, ValueSource source = SourceUnknown);
     bool setValue(const QVariant &val, ValueSource source = SourceUnknown);
+    bool equalsString(const char *str, int length = -1) const;
     const ResourceItemDescriptor &descriptor() const;
     const QDateTime &lastSet() const;
     const QDateTime &lastChanged() const;
@@ -533,7 +569,8 @@ private:
 
     ValueSource m_valueSource = SourceUnknown;
     bool m_isPublic = true;
-    quint16 m_flags = 0; // bitmap of ResourceItem::ItemFlags
+    uint16_t m_flags = 0; // bitmap of ResourceItem::ItemFlags
+    uint16_t m_ridIndex = 0; // index into rItemDescriptors[]
     union
     {
         struct {
@@ -547,15 +584,14 @@ private:
     };
     deCONZ::SteadyTimeRef m_lastZclReport;
 
-    BufStringCacheHandle m_strHandle; // for strings which don't fit into \c m_istr
+    unsigned m_strHandle = 0; // for strings which don't fit into \c m_istr
     ItemString m_istr; // internal embedded small string
     deCONZ::TimeSeconds m_refreshInterval;
     QString *m_str = nullptr;
-    const ResourceItemDescriptor *m_rid = &rInvalidItemDescriptor;
     QDateTime m_lastSet;
     QDateTime m_lastChanged;
     std::vector<int> m_rulesInvolved; // the rules a resource item is trigger
-    ZCL_Param m_zclParam{};
+    ZCL_Param m_zclParam{}; // for parse function
     ParseFunction_t m_parseFunction = nullptr;
     quint32 m_ddfItemHandle = 0; // invalid item handle
 };
@@ -600,6 +636,7 @@ public:
     void addStateChange(const StateChange &stateChange);
     std::vector<StateChange> &stateChanges() { return m_stateChanges; }
     void cleanupStateChanges();
+    void removeStateChangesForItem(const char *suffix);
     Resource *parentResource() { return m_parent; }
     const Resource *parentResource() const { return m_parent; }
     void setParentResource(Resource *parent) { m_parent = parent; }
@@ -705,6 +742,7 @@ bool isValidRConfigGroup(const QString &str);
 
 uint8_t DDF_GetSubDeviceOrder(const QString &type);
 QLatin1String R_DataTypeToString(ApiDataType type);
+QVariant R_ItemToRestApiVariant(const ResourceItem *item);
 inline bool isValid(Resource::Handle hnd) { return hnd.hash != 0 && hnd.index < UINT16_MAX && hnd.type != 0; }
 inline bool operator==(Resource::Handle a, Resource::Handle b) { return a.hash == b.hash && a.type == b.type; }
 
