@@ -205,7 +205,7 @@ int DeRestPluginPrivate::getAllSensors(const ApiRequest &req, ApiResponse &rsp)
             REQ_NOT_HANDLED
  */
 int DeRestPluginPrivate::getSensor(const ApiRequest &req, ApiResponse &rsp)
-{
+{DBG_Printf(DBG_INFO_L2, "debug test\n");
     DBG_Assert(req.path.size() == 4);
 
     if (req.path.size() != 4)
