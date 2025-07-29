@@ -1853,6 +1853,7 @@ std::vector<DEV_PollItem> DEV_GetPollItems(Device *device)
 
             if (item->zclUnsupportedAttribute())
             {
+                DBG_Printf(DBG_DEV, "DEV_GetPollItems item->zclUnsupportedAttribute(): " FMT_MAC "\n", FMT_MAC_CAST(device->key()));
                 continue;
             }
 
@@ -2107,6 +2108,7 @@ void DEV_PollBusyStateHandler(Device *device, const Event &event)
             {
                 if (status == deCONZ::ZclUnsupportedAttributeStatus)
                 {
+                DBG_Printf(DBG_DEV, "DEV_PollBusyStateHandler item->zclUnsupportedAttribute(): " FMT_MAC "\n", FMT_MAC_CAST(device->key()));
                     const auto &pi = d->pollItems.back();
                     Resource *r = DEV_GetResource(pi.resource->handle());
                     ResourceItem *item = r ? r->item(pi.item->descriptor().suffix) : nullptr;
