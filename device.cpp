@@ -654,7 +654,7 @@ bool DEV_FillItemFromBasicCluster(Device *device, const char *itemSuffix, deCONZ
 
         const QVariant v = at->toVariant();
 
-        if ((!v.isNull() && ditem->setValue(v)) || (v.isNull() && itemSuffix == QString(RAttrManufacturerName) && ditem->setValue("ZCL_UNSUPPORTED_ATTRIBUTE")))
+        if ((!v.isNull() && ditem->setValue(v)) || (v.isNull() && itemSuffix == QString(RAttrManufacturerName) && ditem->setValue(QString("ZCL_UNSUPPORTED_ATTRIBUTE"))))
         {
             return true;
         }
