@@ -5809,6 +5809,7 @@ Contactor > On/off=0003 - HP/HC=0004</description>
           </attribute>
           <attribute id="0x000C" name="Unknown" type="ostring" mfcode="0x115f" access="rw" required="m"></attribute>
           <attribute id="0x000D" name="Unknown" type="u8" mfcode="0x115f" access="rw" required="m"></attribute>
+          <attribute id="0x000F" name="S1 Unknown" type="ostring" mfcode="0x115f" access="rw" required="m"> </attribute>
           <attribute id="0x00E8" name="Unknown" type="bool" mfcode="0x115f" access="rw" required="m"></attribute>
           <attribute id="0x00E9" name="Mars-Tech Config" type="u8" mfcode="0x115f" access="rw" required="m">
             <description>Mars-Tech Config: 1 - Normal, 2 - Control On/Off of a target, 3 - Momentary switch control</description>
