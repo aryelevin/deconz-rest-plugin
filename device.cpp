@@ -784,7 +784,7 @@ void DEV_BasicClusterStateHandler(Device *device, const Event &event)
     else if (event.what() == REventZclResponse /*&& !event.hasData()*/ && EventZclStatus(event) == deCONZ::ZclUnsupportedAttributeStatus)
     {
         uint8_t status = EventZclStatus(event);
-        ResourceItem *item device->item(RAttrManufacturerName);
+        ResourceItem *item = device->item(RAttrManufacturerName);
         bool isUnsupported = item->zclUnsupportedAttribute();
         DBG_Printf(DBG_DEV, "DEV received event.what() %s: " FMT_MAC ", event.hasData %i, EventZclStatus %i, ZclUnsupportedAttributeStatus: %i, event.resource(): %s, device->item(RAttrManufacturerName): %i\n", event.what(), FMT_MAC_CAST(device->key()), event.hasData(), status, deCONZ::ZclUnsupportedAttributeStatus, event.resource(), isUnsupported);
         d->setState(DEV_InitStateHandler); // ok re-evaluate
