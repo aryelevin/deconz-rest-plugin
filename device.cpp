@@ -654,7 +654,7 @@ bool DEV_FillItemFromBasicCluster(Device *device, const char *itemSuffix, deCONZ
 
         const QVariant v = at->toVariant();
 
-        if ((!v.isNull() && ditem->setValue(v))/* || (v.isNull() && itemSuffix == QString(RAttrManufacturerName) && ditem->setValue(QString("ZCL_UNSUPPORTED_ATTRIBUTE")))*/)
+        if (!v.isNull() && ditem->setValue(v))
         {
             return true;
         }
@@ -730,20 +730,17 @@ void DEV_BasicClusterStateHandler(Device *device, const Event &event)
         {
             if (DEV_FillItemFromSubdevices(device, it.suffix, subDevices))
             {
-                DBG_Printf(DBG_DEV, "DEV_FillItemFromSubdevices: " FMT_MAC "\n", FMT_MAC_CAST(device->key()));
                 okCount++;
                 continue;
             }
             else if (DEV_FillItemFromBasicCluster(device, it.suffix, it.clusterId,  it.attrId))
             {
-                DBG_Printf(DBG_DEV, "DEV_FillItemFromBasicCluster: " FMT_MAC "\n", FMT_MAC_CAST(device->key()));
                 okCount++;
                 continue;
             }
 
             if (DEV_ZclRead(device, device->item(it.suffix), it.clusterId, it.attrId))
             {
-                DBG_Printf(DBG_DEV, "DEV_ZclRead: " FMT_MAC "\n", FMT_MAC_CAST(device->key()));
                 d->startStateTimer(MaxConfirmTimeout, StateLevel0);
                 return; // keep state and wait for REventStateTimeout or response
             }
@@ -788,7 +785,8 @@ void DEV_BasicClusterStateHandler(Device *device, const Event &event)
         deCONZ::ZclAttributeId_t attrId = 0x0005_atid;
         bool modelIdAttrIsOk = DEV_FillItemFromBasicCluster(device, itemSuffix, clusterId,  attrId);
 
-        if (modelIdAttrIsOk && device->item(RAttrManufacturerName)->setValue(QString("ZCL_UNSUPPORTED_ATTRIBUTE"))) {
+        if (modelIdAttrIsOk && device->item(RAttrManufacturerName)->setValue(QString("ZCL_UNSUPPORTED_ATTRIBUTE")))
+        {
             DBG_Printf(DBG_DEV, "LUMI: DEV modelId: %s, " FMT_MAC "\n", qPrintable(device->item(RAttrModelId)->toString()), FMT_MAC_CAST(device->key()));
             d->setState(DEV_GetDeviceDescriptionHandler);
         }
@@ -803,15 +801,6 @@ void DEV_BasicClusterStateHandler(Device *device, const Event &event)
             DBG_Printf(DBG_DEV, "LUMI: DEV read basic cluster timeout: " FMT_MAC "\n", FMT_MAC_CAST(device->key()));
             d->setState(DEV_InitStateHandler);
         }
-
-    
-
-        // uint8_t status = EventZclStatus(event);
-        // ResourceItem *item = device->item(RAttrManufacturerName);
-        // bool isUnsupported = item->zclUnsupportedAttribute();
-        // DBG_Printf(DBG_DEV, "DEV received event.what() %s: " FMT_MAC ", event.hasData %i, EventZclStatus %i, ZclUnsupportedAttributeStatus: %i, event.resource(): %s, device->item(RAttrManufacturerName): %i\n", event.what(), FMT_MAC_CAST(device->key()), event.hasData(), status, deCONZ::ZclUnsupportedAttributeStatus, event.resource(), isUnsupported);
-        // d->setState(DEV_InitStateHandler); // ok re-evaluate
-        // DEV_EnqueueEvent(device, REventAwake);
     }
     else if (event.what() == RAttrManufacturerName || event.what() == RAttrModelId)
     {
