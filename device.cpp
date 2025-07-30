@@ -794,12 +794,12 @@ void DEV_BasicClusterStateHandler(Device *device, const Event &event)
         }
         else
         {
-            // if (DEV_ZclRead(device, device->item(itemSuffix), clusterId, attrId))
-            // {
-            //     DBG_Printf(DBG_DEV, "LUMI: DEV_ZclRead: " FMT_MAC "\n", FMT_MAC_CAST(device->key()));
-            //     d->startStateTimer(MaxConfirmTimeout, StateLevel0);
-            //     return; // keep state and wait for REventStateTimeout or response
-            // }
+            if (DEV_ZclRead(device, device->item(itemSuffix), clusterId, attrId))
+            {
+                DBG_Printf(DBG_DEV, "LUMI: DEV_ZclRead: " FMT_MAC "\n", FMT_MAC_CAST(device->key()));
+                d->startStateTimer(MaxConfirmTimeout, StateLevel0);
+                return; // keep state and wait for REventStateTimeout or response
+            }
             DBG_Printf(DBG_DEV, "LUMI: DEV read basic cluster timeout: " FMT_MAC "\n", FMT_MAC_CAST(device->key()));
             d->setState(DEV_InitStateHandler);
         }
