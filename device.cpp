@@ -781,14 +781,54 @@ void DEV_BasicClusterStateHandler(Device *device, const Event &event)
             }
         }
     }
-    else if (event.what() == REventZclResponse /*&& !event.hasData()*/ && EventZclStatus(event) == deCONZ::ZclUnsupportedAttributeStatus)
+    else if (event.what() == REventZclResponse /*&& !event.hasData()*/ && EventZclStatus(event) == deCONZ::ZclUnsupportedAttributeStatus) // This is only for Aqara/Xiaomi products where mfr id is unsupported attribute :(
     {
-        uint8_t status = EventZclStatus(event);
-        ResourceItem *item = device->item(RAttrManufacturerName);
-        bool isUnsupported = item->zclUnsupportedAttribute();
-        DBG_Printf(DBG_DEV, "DEV received event.what() %s: " FMT_MAC ", event.hasData %i, EventZclStatus %i, ZclUnsupportedAttributeStatus: %i, event.resource(): %s, device->item(RAttrManufacturerName): %i\n", event.what(), FMT_MAC_CAST(device->key()), event.hasData(), status, deCONZ::ZclUnsupportedAttributeStatus, event.resource(), isUnsupported);
-        d->setState(DEV_InitStateHandler); // ok re-evaluate
-        DEV_EnqueueEvent(device, REventAwake);
+        const char *itemSuffix = RAttrModelId;
+        deCONZ::ZclClusterId_t clusterId = 0x0000_clid;
+        deCONZ::ZclAttributeId_t attrId = 0x0005_atid;
+    ResourceItem *ditem = device->item(itemSuffix);
+
+    if (!ditem || !device->node())
+    {
+        return false;
+    }
+
+    if (ditem->lastSet().isValid())
+    {
+        return true;
+    }
+
+    for (const auto &sd : device->node()->simpleDescriptors())
+    {
+        const auto cl = std::find_if(sd.inClusters().cbegin(), sd.inClusters().cend(),
+                                     [clusterId](const auto &x) { return x.id_t() == clusterId; });
+
+        if (cl == sd.inClusters().cend()) { continue; }
+
+        const auto at = std::find_if(cl->attributes().cbegin(), cl->attributes().cend(),
+                                     [attrId](const auto &x){ return x.id_t() == attrId; });
+
+        if (at == cl->attributes().cend()) { continue; }
+
+        const QVariant v = at->toVariant();
+
+        if ((!v.isNull() && ditem->setValue(v)) && device->item(RAttrManufacturerName)->setValue(QString("ZCL_UNSUPPORTED_ATTRIBUTE"))) {
+            DBG_Printf(DBG_DEV, "LUMI: DEV modelId: %s, " FMT_MAC "\n", qPrintable(device->item(RAttrModelId)->toString()), FMT_MAC_CAST(device->key()));
+            d->setState(DEV_GetDeviceDescriptionHandler);
+            break;
+        } else {
+            DBG_Printf(DBG_DEV, "LUMI: DEV read basic cluster timeout: " FMT_MAC "\n", FMT_MAC_CAST(device->key()));
+            d->setState(DEV_InitStateHandler);
+            break;
+        }
+    }
+
+        // uint8_t status = EventZclStatus(event);
+        // ResourceItem *item = device->item(RAttrManufacturerName);
+        // bool isUnsupported = item->zclUnsupportedAttribute();
+        // DBG_Printf(DBG_DEV, "DEV received event.what() %s: " FMT_MAC ", event.hasData %i, EventZclStatus %i, ZclUnsupportedAttributeStatus: %i, event.resource(): %s, device->item(RAttrManufacturerName): %i\n", event.what(), FMT_MAC_CAST(device->key()), event.hasData(), status, deCONZ::ZclUnsupportedAttributeStatus, event.resource(), isUnsupported);
+        // d->setState(DEV_InitStateHandler); // ok re-evaluate
+        // DEV_EnqueueEvent(device, REventAwake);
     }
     else if (event.what() == RAttrManufacturerName || event.what() == RAttrModelId)
     {
