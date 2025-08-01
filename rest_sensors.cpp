@@ -2047,6 +2047,15 @@ int DeRestPluginPrivate::changeSensorConfig(const ApiRequest &req, ApiResponse &
                         updated = true;
                     }
                 }
+                else if (rid.suffix == RConfigSpeed) // Signed integer
+                {
+                    if (devManaged && rsub)
+                    {
+                        change.addTargetValue(rid.suffix, data.integer);
+                        rsub->addStateChange(change);
+                        updated = true;
+                    }
+                }
 
                 if (updated)
                 {
