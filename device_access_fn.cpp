@@ -763,7 +763,7 @@ bool parseTuyaData(Resource *r, ResourceItem *item, const deCONZ::ApsDataIndicat
         case TuyaDataTypeRaw:
         {
             // Not setting value because need to much ressource.
-            char charUnit;
+            QChar charUnit;
             for (quint16 i = 0; i < dataLength; i++)
             {
                 stream >> charUnit;
