@@ -771,16 +771,13 @@ bool parseTuyaData(Resource *r, ResourceItem *item, const deCONZ::ApsDataIndicat
                 stream >> charUint;
                 char letter = static_cast<unsigned short>(charUint);
 
-                DBG_Printf(DBG_INFO, "TY_DATA parse char (raw): seq %u, dpid: 0x%02X, type: 0x%02X, length: %u, val: %c\n",
-                   seq, dpid, dataType, dataLength, letter);
+                // DBG_Printf(DBG_INFO, "TY_DATA parse char (raw): seq %u, dpid: 0x%02X, type: 0x%02X, length: %u, val: %c\n",
+                //    seq, dpid, dataType, dataLength, letter);
                 // QChar charUnit = QChar(letter);
                 // str += charUnit;
                 charStr[i] = letter;
             }
             str += charStr;
-            // QByteArray data;
-            // QDataStream stream(&data, QIODevice::WriteOnly);
-            // stream.setByteOrder(QDataStream::LittleEndian);
             
             zclDataType = deCONZ::ZclCharacterString;
         }
@@ -824,6 +821,10 @@ bool parseTuyaData(Resource *r, ResourceItem *item, const deCONZ::ApsDataIndicat
             if (zclDataType == deCONZ::Zcl32BitInt)
             {
                 attr.setValue(qint64(num.s32));
+            }
+            else if (zclDataType == deCONZ::ZclCharacterString)
+            {
+                attr.setValue(str);
             }
             else
             {
