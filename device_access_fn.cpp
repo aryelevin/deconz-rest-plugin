@@ -756,11 +756,25 @@ bool parseTuyaData(Resource *r, ResourceItem *item, const deCONZ::ApsDataIndicat
         deCONZ::NumericUnion num;
         num.u64 = 0;
 
+        QString str = "";
+
         switch (dataType)
         {
         case TuyaDataTypeRaw:
         {
             // Not setting value because need to much ressource.
+            qchar charUnit;
+            for (quint16 i = 0; i < dataLength; i++)
+            {
+                stream >> charUnit;
+                DBG_Printf(DBG_INFO, "TY_DATA parse char (raw): seq %u, dpid: 0x%02X, type: 0x%02X, length: %u, val: %c\n",
+                   rt, seq, dpid, dataType, dataLength, charUnit);
+                str += charUnit;
+            }
+            // QByteArray data;
+            // QDataStream stream(&data, QIODevice::WriteOnly);
+            // stream.setByteOrder(QDataStream::LittleEndian);
+            
             zclDataType = deCONZ::ZclCharacterString;
         }
         break;
@@ -820,8 +834,16 @@ bool parseTuyaData(Resource *r, ResourceItem *item, const deCONZ::ApsDataIndicat
 
         const char *rt = zclFrame.commandId() == TY_DATA_REPORT ? "REPORT" : "RESPONSE";
 
+        if (dataType == TuyaDataTypeRaw)
+        {
+        DBG_Printf(DBG_INFO, "TY_DATA_%s: seq %u, dpid: 0x%02X, type: 0x%02X, length: %u, val: %s\n",
+                   rt, seq, dpid, dataType, dataLength, str);
+        }
+        else
+        {
         DBG_Printf(DBG_INFO, "TY_DATA_%s: seq %u, dpid: 0x%02X, type: 0x%02X, length: %u, val: %d\n",
                    rt, seq, dpid, dataType, dataLength, num.s32);
+        }
     }
 
     return result;
