@@ -756,7 +756,7 @@ bool parseTuyaData(Resource *r, ResourceItem *item, const deCONZ::ApsDataIndicat
         deCONZ::NumericUnion num;
         num.u64 = 0;
 
-        QString str = "";
+        QString str = "switch";
 
         switch (dataType)
         {
