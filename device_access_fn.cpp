@@ -1109,7 +1109,7 @@ bool writeTuyaData(const Resource *r, const ResourceItem *item, deCONZ::ApsContr
         {
             QByteArray bytes = value.toByteArray();
             stream << quint8(TuyaDataTypeRaw);
-            stream << quint16(bytes.length()); // length
+            // stream << quint16(bytes.length()); // length
             stream << bytes;
             DBG_Printf(DBG_INFO, "TY_DATA_WRITE: seq %u, dpid: 0x%02X, type: 0x%02X, length: %u, data: %s\n",
                    req.id(), dpid, dataType, bytes.length(), qPrintable(bytes.toHex()));
