@@ -764,12 +764,14 @@ bool parseTuyaData(Resource *r, ResourceItem *item, const deCONZ::ApsDataIndicat
         {
             // Not setting value because need to much ressource.
             QChar charUnit;
+            quint8 charUint;
             for (quint16 i = 0; i < dataLength; i++)
             {
-                stream >> charUnit;
+                stream >> charUint;
+                char letter = static_cast<unsigned short>(charUint);
                 DBG_Printf(DBG_INFO, "TY_DATA parse char (raw): seq %u, dpid: 0x%02X, type: 0x%02X, length: %u, val: %c\n",
-                   seq, dpid, dataType, dataLength, charUnit.toLatin1());
-                str += charUnit;
+                   seq, dpid, dataType, dataLength, letter);
+                str += letter;
             }
             // QByteArray data;
             // QDataStream stream(&data, QIODevice::WriteOnly);
