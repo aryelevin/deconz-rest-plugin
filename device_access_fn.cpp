@@ -944,6 +944,7 @@ static DA_ReadResult readTuyaAllData(const Resource *r, const ResourceItem *item
           8-bit bitmap   0x18
           16-bit bitmap  0x19
           32-bit bitmap  0x1b
+          string         0x42
 
     - expression: to transform the item value
 
@@ -988,6 +989,7 @@ bool writeTuyaData(const Resource *r, const ResourceItem *item, deCONZ::ApsContr
     case deCONZ::Zcl8BitBitMap:
     case deCONZ::Zcl16BitBitMap:
     case deCONZ::Zcl32BitBitMap:
+    case deCONZ::ZclCharacterString:
         break;
 
     default:
@@ -1100,6 +1102,15 @@ bool writeTuyaData(const Resource *r, const ResourceItem *item, deCONZ::ApsContr
             stream << quint8(TuyaDataTypeBitmap);
             stream << quint16(4); // length
             stream << quint32(value.toUInt());
+        }
+            break;
+
+        case deCONZ::ZclCharacterString:
+        {
+            QByteArray bytes = value.toByteArray();
+            stream << quint8(TuyaDataTypeString);
+            stream << quint16(bytes.length()); // length
+            stream << bytes;
         }
             break;
 
