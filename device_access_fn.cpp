@@ -768,7 +768,7 @@ bool parseTuyaData(Resource *r, ResourceItem *item, const deCONZ::ApsDataIndicat
             {
                 stream >> charUnit;
                 DBG_Printf(DBG_INFO, "TY_DATA parse char (raw): seq %u, dpid: 0x%02X, type: 0x%02X, length: %u, val: %c\n",
-                   rt, seq, dpid, dataType, dataLength, charUnit);
+                   seq, dpid, dataType, dataLength, charUnit);
                 str += charUnit;
             }
             // QByteArray data;
