@@ -756,29 +756,11 @@ bool parseTuyaData(Resource *r, ResourceItem *item, const deCONZ::ApsDataIndicat
         deCONZ::NumericUnion num;
         num.u64 = 0;
 
-        QString str = "";
-
         switch (dataType)
         {
         case TuyaDataTypeRaw:
         {
             // Not setting value because need to much ressource.
-            
-            quint8 charUint;
-            char charStr[dataLength + 1] = "";
-            for (quint16 i = 0; i < dataLength; i++)
-            {
-                stream >> charUint;
-                char letter = static_cast<unsigned short>(charUint);
-
-                // DBG_Printf(DBG_INFO, "TY_DATA parse char (raw): seq %u, dpid: 0x%02X, type: 0x%02X, length: %u, val: %c\n",
-                //    seq, dpid, dataType, dataLength, letter);
-                // QChar charUnit = QChar(letter);
-                // str += charUnit;
-                charStr[i] = letter;
-            }
-            str += charStr;
-            
             zclDataType = deCONZ::ZclCharacterString;
         }
         break;
@@ -822,10 +804,6 @@ bool parseTuyaData(Resource *r, ResourceItem *item, const deCONZ::ApsDataIndicat
             {
                 attr.setValue(qint64(num.s32));
             }
-            else if (zclDataType == deCONZ::ZclCharacterString)
-            {
-                attr.setValue(str);
-            }
             else
             {
                 attr.setValue(quint64(num.u32));
@@ -842,16 +820,8 @@ bool parseTuyaData(Resource *r, ResourceItem *item, const deCONZ::ApsDataIndicat
 
         const char *rt = zclFrame.commandId() == TY_DATA_REPORT ? "REPORT" : "RESPONSE";
 
-        if (dataType == TuyaDataTypeRaw)
-        {
-        DBG_Printf(DBG_INFO, "TY_DATA_%s: seq %u, dpid: 0x%02X, type: 0x%02X, length: %u, val: %s\n",
-                   rt, seq, dpid, dataType, dataLength, qPrintable(str));
-        }
-        else
-        {
         DBG_Printf(DBG_INFO, "TY_DATA_%s: seq %u, dpid: 0x%02X, type: 0x%02X, length: %u, val: %d\n",
                    rt, seq, dpid, dataType, dataLength, num.s32);
-        }
     }
 
     return result;
@@ -944,7 +914,6 @@ static DA_ReadResult readTuyaAllData(const Resource *r, const ResourceItem *item
           8-bit bitmap   0x18
           16-bit bitmap  0x19
           32-bit bitmap  0x1b
-          string         0x42
 
     - expression: to transform the item value
 
@@ -989,7 +958,6 @@ bool writeTuyaData(const Resource *r, const ResourceItem *item, deCONZ::ApsContr
     case deCONZ::Zcl8BitBitMap:
     case deCONZ::Zcl16BitBitMap:
     case deCONZ::Zcl32BitBitMap:
-    case deCONZ::ZclCharacterString:
         break;
 
     default:
@@ -1102,19 +1070,6 @@ bool writeTuyaData(const Resource *r, const ResourceItem *item, deCONZ::ApsContr
             stream << quint8(TuyaDataTypeBitmap);
             stream << quint16(4); // length
             stream << quint32(value.toUInt());
-        }
-            break;
-
-        case deCONZ::ZclCharacterString:
-        {
-            QByteArray bytes = value.toByteArray();
-            stream << quint8(TuyaDataTypeRaw);
-            stream << quint16(bytes.length()); // length
-            // Write the raw data without the length prefix
-            stream.writeRawData(bytes.constData(), bytes.size()); // size() is same as length()
-            // stream << bytes;
-            DBG_Printf(DBG_INFO, "TY_DATA_WRITE: seq %u, dpid: 0x%02X, type: 0x%02X, length: %u, data: %s\n",
-                   req.id(), dpid, dataType, bytes.length(), qPrintable(zclFrame.payload().toHex()));
         }
             break;
 
