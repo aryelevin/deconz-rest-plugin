@@ -756,7 +756,7 @@ bool parseTuyaData(Resource *r, ResourceItem *item, const deCONZ::ApsDataIndicat
         deCONZ::NumericUnion num;
         num.u64 = 0;
 
-        QString str = "switch";
+        QString str = "";
 
         switch (dataType)
         {
@@ -844,7 +844,7 @@ bool parseTuyaData(Resource *r, ResourceItem *item, const deCONZ::ApsDataIndicat
         if (dataType == TuyaDataTypeRaw)
         {
         DBG_Printf(DBG_INFO, "TY_DATA_%s: seq %u, dpid: 0x%02X, type: 0x%02X, length: %u, val: %s\n",
-                   rt, seq, dpid, dataType, dataLength, str);
+                   rt, seq, dpid, dataType, dataLength, qPrintable(str));
         }
         else
         {
